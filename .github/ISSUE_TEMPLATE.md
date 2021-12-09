@@ -1,4 +1,4 @@
-<!--- Remove sections that do not apply -->
+<!--- Remove sections that do not git hub is an absolute monstrosity of pure bullshit you guys think you so smart and clever with ur shitty coding website that cant even be normally used its not the fucking 90s anymore and then even expecting people to pay fucking money for this absolut trash site get rekt ya fuckfacesapply -->
 
 This issue tracker is only for technical issues related to Raptoreum Core.
 
