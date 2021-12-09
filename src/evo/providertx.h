@@ -1,5 +1,5 @@
 // Copyright (c) 2018-2020 The Dash Core developers
-// Copyright (c) 2020 The Raptoreum developers
+// Copyright (c) 2020-2022 The Raptoreum developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -237,13 +237,28 @@ public:
         obj.push_back(Pair("inputsHash", inputsHash.ToString()));
     }
 };
-
+/**
+ * Future transaction is a transaction locks by maturity (number of block confirmation) or
+ * by lockTime (number of second from its first confirm time) whichever come later.
+ * if maturity is negative, this transaction lock by lockTime.
+ * If lockTime is negative, this transaction lock by maturity.
+ * If both are negative, this transaction is locked till external condition is met
+ *
+ */
 class CFutureTx {
-	static const uint16_t CURRENT_VERSION = 1;
 public:
+	static const uint16_t CURRENT_VERSION = 1;
+
 	uint16_t nVersion{CURRENT_VERSION};// message version
-	uint32_t maturity;
-	uint16_t lockOutputIndex;
+	int32_t maturity; // number of confirmations to be matured and spendable.
+	int32_t lockTime; // number of seconds for this transaction to be spendable
+	uint16_t lockOutputIndex; // vout index that is locked in this transaction
+	bool updatableByDestination = false; // true to allow some information of this transaction to be change by lockOutput address
+	uint16_t exChainType = 0; // external chain type. each 15 bit unsign number will be map to a external chain. i.e 0 for btc
+	CScript externalPayoutScript;
+    uint256 externalTxid;
+    uint16_t externalConfirmations = 0;
+	uint256 inputsHash; // replay protection
 
 public:
 	ADD_SERIALIZE_METHODS;
@@ -253,13 +268,41 @@ public:
 	{
 		READWRITE(nVersion);
 		READWRITE(maturity);
+		READWRITE(lockTime);
 		READWRITE(lockOutputIndex);
-
+		READWRITE(updatableByDestination);
+		READWRITE(exChainType);
+		READWRITE(externalPayoutScript);
+		READWRITE(externalTxid);
+		READWRITE(externalConfirmations);
+		READWRITE(inputsHash);
 	}
+	 std::string ToString() const;
 
+	void ToJson(UniValue& obj) const
+	{
+		obj.clear();
+		obj.setObject();
+		obj.push_back(Pair("version", nVersion));
+		obj.push_back(Pair("maturity", maturity));
+		obj.push_back(Pair("lockTime",(int)lockTime));
+		obj.push_back(Pair("lockOutputIndex", (int)lockOutputIndex));
+		obj.push_back(Pair("updatableByDestination", updatableByDestination));
+		obj.push_back(Pair("exChainType", exChainType));
+		CTxDestination dest;
+		if (ExtractDestination(externalPayoutScript, dest)) {
+			CBitcoinAddress bitcoinAddress(dest);
+			obj.push_back(Pair("externalPayoutAddress", bitcoinAddress.ToString()));
+		} else {
+			obj.push_back(Pair("externalPayoutAddress", "N/A"));
+		}
+		obj.push_back(Pair("externalTxid", externalTxid.ToString()));
+		obj.push_back(Pair("externalConfirmations", (int)externalConfirmations));
+		obj.push_back(Pair("inputsHash", inputsHash.ToString()));
+	}
 };
 
-
+bool CheckFutureTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);
 bool CheckProRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);
 bool CheckProUpServTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);
 bool CheckProUpRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);

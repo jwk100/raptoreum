@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin Core developers
 // Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020 The Raptoreum developers
+// Copyright (c) 2020-2022 The Raptoreum developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -492,8 +492,14 @@ public:
         // Raptoreum BIP32 prvkeys start with 'xprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xAD, 0xE4};
         // Raptoreum BIP44 coin type is '5'
+
         nExtCoinType = gArgs.GetArg("-extcoinindex", 200);
         nExtCoinType = nExtCoinType == 0 ? 200 : nExtCoinType;
+        if(ChainNameFromCommandLine() == CBaseChainParams::MAIN) {
+        	std::cout << "mainnet is disable" << endl;
+        	exit(0);
+        }
+
         vector<FounderRewardStructure> rewardStructures = {  {INT_MAX, 5}// 5% founder/dev fee forever
                                         										   };
         consensus.nFounderPayment = FounderPayment(rewardStructures, 250);
@@ -506,6 +512,8 @@ public:
 				{5761, 0}, {INT_MAX, 20}
 			}
         );
+        //FutureRewardShare defaultShare(0.8,0.2,0.0);
+        consensus.nFutureRewardShare = Consensus::FutureRewardShare(0.8,0.2,0.0);
 
         //vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
         vFixedSeeds = std::vector<SeedSpec6>();
@@ -579,6 +587,7 @@ public:
         consensus.DIP0003Enabled = true;
         consensus.BIPCSVEnabled = true;
         consensus.BIP147Enabled = true;
+        consensus.DIP0008Enabled = true;
      //   consensus.DIP0003EnforcementHeight = 7300;
         consensus.powLimit = uint256S("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Raptoreum: 1 day
@@ -609,6 +618,8 @@ public:
         //FindMainNetGenesisBlock(1618814931,  0x20001fff, "test");
         genesis = CreateGenesisBlock(1618814931, 1398, 0x20001fff, 4, 5000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
+		//std::cout << "hashGenesisBlock " << consensus.hashGenesisBlock.GetHex() << std::endl;
+        //assert(consensus.hashGenesisBlock == uint256S("0x3c8321a56c52304c462f03f92f9e36677b57126501d77482feb763dcb5900000"));
         assert(consensus.hashGenesisBlock == uint256S("0x3c8321a56c52304c462f03f92f9e36677b57126501d77482feb763dcb59da91b"));
         assert(genesis.hashMerkleRoot == uint256S("0x87a48bc22468acdd72ee540aab7c086a5bbcddc12b51c6ac925717a74c269453"));
 
@@ -618,10 +629,10 @@ public:
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
         vSeeds.emplace_back("47.151.7.226", true);
-        vSeeds.emplace_back("62.171.153.224", true);
-        vSeeds.emplace_back("98.38.235.195", true);
-        vSeeds.emplace_back("ger1.raptoreum.com", true);
-        vSeeds.emplace_back("ny1.raptoreum.com", true);
+        //vSeeds.emplace_back("62.171.153.224", true);
+        //vSeeds.emplace_back("98.38.235.195", true);
+        //vSeeds.emplace_back("ger1.raptoreum.com", true);
+        //vSeeds.emplace_back("ny1.raptoreum.com", true);
 
         // Testnet Raptoreum addresses start with 'r'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,123);
@@ -635,7 +646,8 @@ public:
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
         // Testnet Raptoreum BIP44 coin type is '1' (All coin's testnet default)
-        nExtCoinType = 10227;
+        nExtCoinType = gArgs.GetArg("-extcoinindex", 10227);
+        nExtCoinType = nExtCoinType == 0 ? 10227 : nExtCoinType;
 
         // long living quorum params
         consensus.llmqs[Consensus::LLMQ_50_60] = llmq3_60;
@@ -652,6 +664,7 @@ public:
 				{INT_MAX, 20}
 			}
 		);
+        consensus.nFutureRewardShare = Consensus::FutureRewardShare(0.8,0.2,0.0);
 
         vector<FounderRewardStructure> rewardStructures = {  {INT_MAX, 5}// 5% founder/dev fee forever
                                                 										   };
@@ -718,6 +731,7 @@ public:
         consensus.BIP66Enabled = true; // BIP66 activated immediately on devnet
         consensus.DIP0001Enabled = true; // DIP0001 activated immediately on devnet
         consensus.DIP0003Enabled = true; // DIP0003 activated immediately on devnet
+        consensus.DIP0008Enabled = true;// DIP0008 activated immediately on devnet
        // consensus.DIP0003EnforcementHeight = 2; // DIP0003 activated immediately on devnet
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 1
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Raptoreum: 1 day
@@ -752,6 +766,8 @@ public:
 
         devnetGenesis = FindDevNetGenesisBlock(consensus, genesis, 50 * COIN);
         consensus.hashDevnetGenesisBlock = devnetGenesis.GetHash();
+        consensus.nFutureRewardShare = Consensus::FutureRewardShare(0.8,0.2,0.0);
+
         vector<FounderRewardStructure> rewardStructures = {  {INT_MAX, 5}// 5% founder/dev fee forever
                                                                 										   };
 		consensus.nFounderPayment = FounderPayment(rewardStructures, 200);
@@ -871,6 +887,7 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x000008ca1832a4baf228eb1553c03d3a2c8e02399550dd6ea8d65cec3ef23d2e"));
         assert(genesis.hashMerkleRoot == uint256S("0xe0028eb9648db56b1ac77cf090b99048a8007e2bb64b68f092c03c7f56a662c7"));
+        consensus.nFutureRewardShare = Consensus::FutureRewardShare(0.8,0.2,0.0);
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();      //!< Regtest mode doesn't have any DNS seeds.

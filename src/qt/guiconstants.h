@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020 The Raptoreum developers
+// Copyright (c) 2020-2022 The Raptoreum developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,7 +33,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "Raptoreum"
-#define QAPP_ORG_DOMAIN "raptoreum.org"
+#define QAPP_ORG_DOMAIN "raptoreum.com"
 #define QAPP_APP_NAME_DEFAULT "Raptoreum-Qt"
 #define QAPP_APP_NAME_TESTNET "Raptoreum-Qt-testnet"
 #define QAPP_APP_NAME_DEVNET "Raptoreum-Qt-%s"

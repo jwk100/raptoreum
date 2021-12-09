@@ -1,5 +1,5 @@
 // Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020 The Raptoreum developers
+// Copyright (c) 2020-2022 The Raptoreum developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -79,6 +79,27 @@ static bool CheckInputsHash(const CTransaction& tx, const ProTx& proTx, CValidat
     uint256 inputsHash = CalcTxInputsHash(tx);
     if (inputsHash != proTx.inputsHash) {
         return state.DoS(100, false, REJECT_INVALID, "bad-protx-inputs-hash");
+    }
+
+    return true;
+}
+
+bool CheckFutureTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state)
+{
+    if (tx.nType != TRANSACTION_FUTURE) {
+        return state.DoS(100, false, REJECT_INVALID, "bad-future-type");
+    }
+
+    CFutureTx ftx;
+    if (!GetTxPayload(tx, ftx)) {
+        return state.DoS(100, false, REJECT_INVALID, "bad-future-payload");
+    }
+
+    if (ftx.nVersion == 0 || ftx.nVersion > CFutureTx::CURRENT_VERSION) {
+        return state.DoS(100, false, REJECT_INVALID, "bad-future-version");
+    }
+    if (!CheckInputsHash(tx, ftx, state)) {
+        return false;
     }
 
     return true;

@@ -1,5 +1,5 @@
 // Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020 The Raptoreum developers
+// Copyright (c) 2020-2022 The Raptoreum developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -224,7 +224,7 @@ CDeterministicMNCPtr CDeterministicMNList::GetMNPayee() const
 //    if ((nHeight < 900 &&  mnMap.size() == 0)||(nHeight >= 900 && mnMap.size() <= 10)) {
 //        return nullptr;
 //    }
-	if(mnMap.size() <= 10) {
+	if(mnMap.size() < 10 && Params().NetworkIDString().compare("main") == 0) {
 		return nullptr;
 	}
 
@@ -241,7 +241,7 @@ CDeterministicMNCPtr CDeterministicMNList::GetMNPayee() const
 std::vector<CDeterministicMNCPtr> CDeterministicMNList::GetProjectedMNPayees(int nCount) const
 {
 	int validMnCount =  GetValidMNsCount();
-	if(validMnCount < 10) {
+	if(validMnCount < 10 && Params().NetworkIDString().compare("main") == 0) {
 		nCount = 0;
 	} else if (nCount > validMnCount) {
         nCount = validMnCount;
