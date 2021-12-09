@@ -3,7 +3,7 @@
     	
     <configuration id=kjzfkjfkjgfkhgfkhgf name="Default">
         		
-        <extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+        <extension point="Hello from JWK100">
             			
             <provider copy-of="extension" id="org.eclipse.cdt.ui.UserLanguageSettingsProvider"/>
             			
