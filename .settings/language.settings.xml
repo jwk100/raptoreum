@@ -18,7 +18,7 @@
     	
     <configuration id=kjzfkjfkjgfkhgfkhgf name="Default">
         		
-        <extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+        <extension point="org.eclipse.cdt.core.FUCKCRYPTO">
             			
             <provider copy-of="extension" id="org.eclipse.cdt.ui.UserLanguageSettingsProvider"/>
             			
