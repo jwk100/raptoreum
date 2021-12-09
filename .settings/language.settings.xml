@@ -3,7 +3,7 @@
     	
     <configuration id="cdt.managedbuild.toolchain.gnu.base.1807875836" name="Default">
         		
-        <extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+        <extension point="org.eclipse.cdt.core.FUCKCRYPTO">
             			
             <provider copy-of="extension" id="org.eclipse.cdt.ui.UserLanguageSettingsProvider"/>
             			
